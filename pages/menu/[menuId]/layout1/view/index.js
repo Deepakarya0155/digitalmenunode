@@ -3,11 +3,15 @@ import React from "react";
 import { LayoutOneAppBar } from "../../../../../Components/Layout1AppBar";
 import layoutcss from "@/styles/Layout1.module.css";
 import { Card, CardContent, Grid, Typography } from "@mui/material";
-import { AddBox } from "@mui/icons-material";
+import { AddBox, SystemUpdateOutlined } from "@mui/icons-material";
 import CircleIcon from "@mui/icons-material/Circle";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import Constants from "@/Services/Constants";
 import { GET } from "@/Services/ApiCalling";
+import { jsx } from "@emotion/react";
+import { getRestaurentDetails } from "@/Services/BackendCall";
+import { searchMenuItem } from "@/Services/HelperService";
+import VegNonVegSelector from "@/Components/VegNonVegSelector";
 
 const Amount = ({ half, full }) => {
   return (
@@ -70,8 +74,8 @@ const ItemAndDiscription = ({ title, discription, veg }) => {
             position: "relative",
             top: "5px",
             paddingRight: "3px",
+            fontSize: "15px",
           }}
-          fontSize="small"
         ></CircleIcon>
       </Grid>
       <Grid item xs={11}>
@@ -131,7 +135,7 @@ const MenuItem = ({ title, discription, half, full, veg }) => {
 const CategoryList = ({ catName, items }) => {
   return (
     <>
-      <CategoryText>Veg Non</CategoryText>
+      <CategoryText>{catName}</CategoryText>
       {items.map((item, key) => (
         <MenuItem
           key={key}
@@ -148,13 +152,22 @@ const CategoryList = ({ catName, items }) => {
 
 const LayoutOneView = () => {
   const [searchText, setSearchText] = React.useState("");
-  const [menuItems, setMenuItem] = React.useState("");
+  const [menuItems, setMenuItem] = React.useState();
   const [response, setResponse] = React.useState();
+  const [vegNonVegFlag, setVegNonVegFlag] = React.useState();
+
   React.useEffect(() => {
-    GET(Constants.BACKEND_URL_RESTAURENT_DETAILS).then((res) => {
-      setResponse(res);
-    });
+    getRestaurentDetails(1, setResponse);
   }, []);
+  React.useEffect(() => {
+    if (response !== undefined) {
+      setMenuItem(response.menuItems);
+    }
+  }, [response]);
+
+  React.useEffect(() => {
+    setMenuItem(searchMenuItem(searchText, vegNonVegFlag, response));
+  }, [searchText, vegNonVegFlag]);
 
   return (
     <>
@@ -165,9 +178,11 @@ const LayoutOneView = () => {
           setSearchText={setSearchText}
         ></LayoutOneAppBar>
       )}
-      {response !== undefined && (
+
+      {menuItems !== undefined && (
         <Container>
-          {response.menuItems.map((item, key) => (
+          <VegNonVegSelector response={setVegNonVegFlag}></VegNonVegSelector>
+          {menuItems.map((item, key) => (
             <CategoryList
               key={key}
               catName={item.catName}

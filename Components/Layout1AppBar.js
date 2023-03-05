@@ -46,12 +46,11 @@ const HomeIconButton = ({ homeLink }) => {
       color="inherit"
       aria-label="open drawer"
       sx={{ mr: 2, display: "block" }}
+      onClick={() => {
+        route.push(homeLink);
+      }}
     >
-      <HomeIcon
-        onClick={() => {
-          route.push(homeLink);
-        }}
-      />
+      <HomeIcon />
     </IconButton>
   );
 };
