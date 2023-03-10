@@ -23,6 +23,7 @@ const SearchField = ({ searchTextFlag, setSearchTextFlag, setSearchText }) => {
         className={appbarcss.searchInput}
         sx={{
           display: searchTextFlag ? "none" : "block",
+          color: "black",
         }}
         onBlur={(event) => {
           if (event.target.value === "") {
