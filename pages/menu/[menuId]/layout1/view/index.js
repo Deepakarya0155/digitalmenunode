@@ -17,6 +17,7 @@ import { searchMenuItem } from "@/Services/HelperService";
 import VegNonVegSelector from "@/Components/VegNonVegSelector";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
+import AddItemModel from "@/Components/AddItemModel";
 
 const Amount = ({ half, full }) => {
   return (
@@ -32,7 +33,7 @@ const Amount = ({ half, full }) => {
             paddingRight: "5px",
             borderRadius: "5px",
             textTransform: "uppercase",
-            display: half !== undefined ? "block" : "none",
+            display: half !== undefined && half !== null ? "block" : "none",
           }}
         >
           Half {half}
@@ -111,7 +112,8 @@ const ItemAndDiscription = ({ title, discription, veg }) => {
   );
 };
 
-const MenuItem = ({ title, discription, half, full, veg }) => {
+const MenuItem = ({ id, title, discription, half, full, veg }) => {
+  const [openModel, setOpenModel] = React.useState(false);
   return (
     <Container
       sx={{
@@ -121,7 +123,17 @@ const MenuItem = ({ title, discription, half, full, veg }) => {
         borderRadius: "10px",
       }}
     >
-      <Grid container>
+      <AddItemModel
+        open={openModel}
+        setOpen={setOpenModel}
+        data={{ id, title, discription, half, full, veg }}
+      ></AddItemModel>
+      <Grid
+        container
+        onClick={() => {
+          setOpenModel(true);
+        }}
+      >
         <Grid item xs={9}>
           <ItemAndDiscription
             title={title}
@@ -144,6 +156,7 @@ const CategoryList = ({ catName, items }) => {
       {items.map((item, key) => (
         <MenuItem
           key={key}
+          id={item.item_id}
           title={item.title}
           discription={item.discription}
           full={item.full}
@@ -158,10 +171,10 @@ const CategoryList = ({ catName, items }) => {
 const LayoutOneView = () => {
   const [searchText, setSearchText] = React.useState("");
   const [menuItems, setMenuItem] = React.useState();
-  // const [response, setResponse] = React.useState();
   const [vegNonVegFlag, setVegNonVegFlag] = React.useState();
   const useGetRestaurent = useGetRestaurentDetails();
   const { appDetails: response } = useSelector((sl) => sl.app);
+
   const router = useRouter();
 
   React.useEffect(() => {
@@ -194,6 +207,7 @@ const LayoutOneView = () => {
       {menuItems !== undefined && (
         <Container>
           <VegNonVegSelector response={setVegNonVegFlag}></VegNonVegSelector>
+
           {menuItems.map((item, key) => (
             <CategoryList
               key={key}
