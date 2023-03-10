@@ -9,9 +9,14 @@ import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import Constants from "@/Services/Constants";
 import { GET } from "@/Services/ApiCalling";
 import { jsx } from "@emotion/react";
-import { getRestaurentDetails } from "@/Services/BackendCall";
+import {
+  getRestaurentDetails,
+  useGetRestaurentDetails,
+} from "@/Services/BackendCall";
 import { searchMenuItem } from "@/Services/HelperService";
 import VegNonVegSelector from "@/Components/VegNonVegSelector";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 
 const Amount = ({ half, full }) => {
   return (
@@ -153,25 +158,32 @@ const CategoryList = ({ catName, items }) => {
 const LayoutOneView = () => {
   const [searchText, setSearchText] = React.useState("");
   const [menuItems, setMenuItem] = React.useState();
-  const [response, setResponse] = React.useState();
+  // const [response, setResponse] = React.useState();
   const [vegNonVegFlag, setVegNonVegFlag] = React.useState();
+  const useGetRestaurent = useGetRestaurentDetails();
+  const { appDetails: response } = useSelector((sl) => sl.app);
+  const router = useRouter();
 
   React.useEffect(() => {
-    getRestaurentDetails(1, setResponse);
-  }, []);
+    useGetRestaurent.fetchApiDetails(router.query.menuId);
+  }, [router.query.menuId]);
+
   React.useEffect(() => {
-    if (response !== undefined) {
+    if (response !== null && undefined !== response.menuItems) {
+      console.log(response);
       setMenuItem(response.menuItems);
     }
   }, [response]);
 
   React.useEffect(() => {
-    setMenuItem(searchMenuItem(searchText, vegNonVegFlag, response));
+    if (response !== null && undefined !== response.menuItems) {
+      setMenuItem(searchMenuItem(searchText, vegNonVegFlag, response));
+    }
   }, [searchText, vegNonVegFlag]);
 
   return (
     <>
-      {response !== undefined && (
+      {response !== null && (
         <LayoutOneAppBar
           name={response.restaurentName}
           homeLink={response.homeLink}

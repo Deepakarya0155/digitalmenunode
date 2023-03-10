@@ -13,6 +13,13 @@ import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import { Desktop, Mobile } from "../../../../Components/Helper";
 
 import layoutcss from "@/styles/Layout1.module.css";
+import { useDispatch, useSelector } from "react-redux";
+import { updatename } from "@/Services/CommonStore";
+import {
+  getRestaurentDetails,
+  useGetRestaurentDetails,
+} from "@/Services/BackendCall";
+import { useEffect, useState } from "react";
 
 const Reply = ({ children }) => {
   return (
@@ -209,24 +216,21 @@ const ContactUs = ({ address, phoneNumbers, socialMedia }) => {
 
 const MenuHomePage = () => {
   const router = useRouter();
+  // const [restDetails, setRestDetails] = useState();
+  const useGetRestaurent = useGetRestaurentDetails();
+  const { appDetails: restDetails } = useSelector((sl) => sl.app);
+  useEffect(() => {
+    useGetRestaurent.fetchApiDetails(router.query.menuId);
+  }, [router.query.menuId]);
 
-  const restDetails = {
-    name: "ABC",
-    OpenMenuLink: "/menu/1/layout1/view",
-    contact: {
-      address: "PB 15 Abohar",
-      phoneNumbers: [9988887783, 9988887783],
-      socialMedia: [
-        { site: "Follow us on Facebook", link: "https://www.facebook.com/" },
-        { site: "Follow us on Instagram", link: "https://www.instagram.com/" },
-      ],
-    },
-  };
+  if (restDetails === null) {
+    return <>Someting went wrong</>;
+  }
 
   return (
     <Box>
       <Container>
-        <RestaurentName>{restDetails.name}</RestaurentName>
+        <RestaurentName>{restDetails.restaurentName}</RestaurentName>
         <OpenMenuButton link={restDetails.OpenMenuLink} />
       </Container>
       <Mobile>
@@ -250,4 +254,5 @@ const MenuHomePage = () => {
     </Box>
   );
 };
+
 export default MenuHomePage;
