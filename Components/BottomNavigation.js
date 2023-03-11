@@ -19,13 +19,9 @@ export default function ButtomNavigation({ value, setValue }) {
       value={value}
       onChange={handleChange}
     >
+      <BottomNavigationAction label="Menu" value="menu" icon={<MenuIcon />} />
       <BottomNavigationAction
-        label="Recents"
-        value="menu"
-        icon={<MenuIcon />}
-      />
-      <BottomNavigationAction
-        label="Favorites"
+        label="Cart"
         value="cart"
         icon={<ReceiptIcon />}
       />
