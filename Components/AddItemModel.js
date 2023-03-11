@@ -6,17 +6,24 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Grid, Hidden, IconButton } from "@mui/material";
-import RemoveIcon from "@mui/icons-material/Remove";
-import AddIcon from "@mui/icons-material/Add";
+import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutlined";
+import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
+
 import { Box } from "@mui/system";
-const AddAndSubtractCount = ({ updateCount, number, msg }) => {
+import AppSilder from "./AppSlider";
+import { useDispatch, useSelector } from "react-redux";
+import { updateAppCommonData } from "@/Services/CommonStore";
+const AddAndSubtractCount = ({ count, updateCount, number, msg }) => {
+  const iconSX = { fontSize: 30, pt: 2.5 };
+
   const subtract = () => {
     updateCount((old) => {
-      if (old == 0) {
-        return old;
-      } else {
-        return old - number;
+      old -= number;
+
+      if (old <= 0) {
+        return 0;
       }
+      return old;
     });
   };
   const add = () => {
@@ -27,16 +34,22 @@ const AddAndSubtractCount = ({ updateCount, number, msg }) => {
 
   return (
     <Grid container>
-      <Grid item sx={{ flex: 1 }}>
-        {msg}
+      <Grid item>
+        <IconButton onClick={subtract} color="primary">
+          <RemoveCircleOutlinedIcon sx={iconSX}></RemoveCircleOutlinedIcon>
+        </IconButton>
+      </Grid>
+      <Grid item sx={{ flex: 1, pt: 2.7, pl: 1 }}>
+        <AppSilder
+          count={count}
+          setCount={updateCount}
+          step={number}
+        ></AppSilder>
       </Grid>
       <Grid item>
-        <Button variant="outlined" sx={{ borderRadius: 15 }} onClick={subtract}>
-          <RemoveIcon sx={{ fontSize: 20 }}></RemoveIcon>
-        </Button>
-        <Button variant="outlined" sx={{ borderRadius: 15 }} onClick={add}>
-          <AddIcon sx={{ fontSize: 20 }}></AddIcon>
-        </Button>
+        <IconButton color="primary" onClick={add}>
+          <AddCircleOutlinedIcon sx={iconSX}></AddCircleOutlinedIcon>
+        </IconButton>
       </Grid>
     </Grid>
   );
@@ -45,14 +58,23 @@ const AddAndSubtractCount = ({ updateCount, number, msg }) => {
 export default function AddItemModel({ open, setOpen, data }) {
   const [count, updateCount] = React.useState(0);
   const [price, updatePrice] = React.useState(0);
+  const { cart } = useSelector((sl) => sl.app);
+  const dispatcher = useDispatch();
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
+    let tempCart = [];
+
     setOpen(false);
-    console.log(data);
+    if (count > 0) {
+      tempCart = [...cart, { ...data, count, price }];
+    }
+    updateCount(0);
+    updatePrice(0);
+    dispatcher(updateAppCommonData.updateCart(tempCart));
   };
 
   React.useEffect(() => {
@@ -74,20 +96,34 @@ export default function AddItemModel({ open, setOpen, data }) {
         <DialogTitle id="alert-dialog-title">{data.title}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description" color="secondary">
-            <Box sx={{ display: data.half === null ? "none" : "block" }}>
+            ({data.discription})
+          </DialogContentText>
+          <Box>
+            <Box>
               <AddAndSubtractCount
                 updateCount={updateCount}
-                number={0.5}
+                number={data.half === null ? 1 : 0.5}
                 msg={"Half"}
               ></AddAndSubtractCount>
             </Box>
-            <AddAndSubtractCount
-              updateCount={updateCount}
-              number={1}
-              msg={"Full"}
-            ></AddAndSubtractCount>
-            {price}
-          </DialogContentText>
+
+            <Box>
+              <Grid container>
+                <Grid item sx={{ border: 1, padding: 1 }}>
+                  Q
+                </Grid>
+                <Grid item sx={{ flex: 1, border: 1, padding: 1 }}>
+                  {count}
+                </Grid>
+                <Grid item sx={{ flex: 1, border: 1, padding: 1 }}>
+                  Amount
+                </Grid>
+                <Grid item sx={{ flex: 1, border: 1, padding: 1 }}>
+                  {price}
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>close</Button>

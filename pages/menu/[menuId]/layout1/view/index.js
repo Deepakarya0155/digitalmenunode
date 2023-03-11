@@ -2,7 +2,14 @@ import { Box, Container } from "@mui/system";
 import React from "react";
 import { LayoutOneAppBar } from "../../../../../Components/Layout1AppBar";
 import layoutcss from "@/styles/Layout1.module.css";
-import { Card, CardContent, Grid, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Grid,
+  List,
+  ListItem,
+  Typography,
+} from "@mui/material";
 import { AddBox, SystemUpdateOutlined } from "@mui/icons-material";
 import CircleIcon from "@mui/icons-material/Circle";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
@@ -18,6 +25,7 @@ import VegNonVegSelector from "@/Components/VegNonVegSelector";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import AddItemModel from "@/Components/AddItemModel";
+import ButtomNavigation from "@/Components/BottomNavigation";
 
 const Amount = ({ half, full }) => {
   return (
@@ -153,19 +161,44 @@ const CategoryList = ({ catName, items }) => {
   return (
     <>
       <CategoryText>{catName}</CategoryText>
-      {items.map((item, key) => (
-        <MenuItem
-          key={key}
-          id={item.item_id}
-          title={item.title}
-          discription={item.discription}
-          full={item.full}
-          half={item.half}
-          veg={item.veg}
-        ></MenuItem>
-      ))}
+      <List>
+        {items.map((item, key) => (
+          <MenuItem
+            key={key}
+            id={item.item_id}
+            title={item.title}
+            discription={item.discription}
+            full={item.full}
+            half={item.half}
+            veg={item.veg}
+          ></MenuItem>
+        ))}
+      </List>
     </>
   );
+};
+
+const MenuView = ({ menuItems, setVegNonVegFlag }) => {
+  return (
+    <>
+      {menuItems !== undefined && (
+        <Container>
+          <VegNonVegSelector response={setVegNonVegFlag}></VegNonVegSelector>
+
+          {menuItems.map((item, key) => (
+            <CategoryList
+              key={key}
+              catName={item.catName}
+              items={item.items}
+            ></CategoryList>
+          ))}
+        </Container>
+      )}
+    </>
+  );
+};
+const CartView = () => {
+  return <>Cart</>;
 };
 
 const LayoutOneView = () => {
@@ -174,6 +207,8 @@ const LayoutOneView = () => {
   const [vegNonVegFlag, setVegNonVegFlag] = React.useState();
   const useGetRestaurent = useGetRestaurentDetails();
   const { appDetails: response } = useSelector((sl) => sl.app);
+  const [bottomNavigationValue, setBottomNavigationValue] =
+    React.useState("menu");
 
   const router = useRouter();
 
@@ -196,27 +231,29 @@ const LayoutOneView = () => {
 
   return (
     <>
-      {response !== null && (
-        <LayoutOneAppBar
-          name={response.restaurentName}
-          homeLink={response.homeLink}
-          setSearchText={setSearchText}
-        ></LayoutOneAppBar>
-      )}
+      <Box sx={{ pt: 8 }}>
+        {response !== null && (
+          <LayoutOneAppBar
+            name={response.restaurentName}
+            homeLink={response.homeLink}
+            setSearchText={setSearchText}
+          ></LayoutOneAppBar>
+        )}
+        {bottomNavigationValue != undefined &&
+          bottomNavigationValue === "menu" && (
+            <MenuView
+              menuItems={menuItems}
+              setVegNonVegFlag={setVegNonVegFlag}
+            ></MenuView>
+          )}
 
-      {menuItems !== undefined && (
-        <Container>
-          <VegNonVegSelector response={setVegNonVegFlag}></VegNonVegSelector>
-
-          {menuItems.map((item, key) => (
-            <CategoryList
-              key={key}
-              catName={item.catName}
-              items={item.items}
-            ></CategoryList>
-          ))}
-        </Container>
-      )}
+        {bottomNavigationValue != undefined &&
+          bottomNavigationValue === "cart" && <CartView></CartView>}
+      </Box>
+      <ButtomNavigation
+        value={bottomNavigationValue}
+        setValue={setBottomNavigationValue}
+      ></ButtomNavigation>
     </>
   );
 };

@@ -79,7 +79,7 @@ export function LayoutOneAppBar({ name, homeLink, setSearchText }) {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar sx={{ position: "fixed", top: 0, left: 0, right: 0 }}>
         <Toolbar>
           <HomeIconButton homeLink={homeLink}></HomeIconButton>
           <RestName nm={name}></RestName>

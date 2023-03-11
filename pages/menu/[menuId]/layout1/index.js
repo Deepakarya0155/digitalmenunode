@@ -234,7 +234,7 @@ const MenuHomePage = () => {
         <OpenMenuButton link={restDetails.OpenMenuLink} />
       </Container>
       <Mobile>
-        <Container className={layoutcss.footer}>
+        <Container>
           <ContactUs
             address={restDetails.contact.address}
             phoneNumbers={restDetails.contact.phoneNumbers}

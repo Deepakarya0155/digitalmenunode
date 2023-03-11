@@ -1,10 +1,16 @@
 const { createSlice, configureStore } = require("@reduxjs/toolkit");
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
+import { getDefaultMiddleware } from "@reduxjs/toolkit";
+
+const customizedMiddleware = getDefaultMiddleware({
+  serializableCheck: false,
+});
 
 const initData = {
   name: "deepak",
   appDetails: null,
   drawerMenuItem: [],
+  cart: [],
 };
 
 const appSlice = createSlice({
@@ -19,6 +25,12 @@ const appSlice = createSlice({
         ...state,
         appDetails: action.payload,
         drawerMenuItem: createDrawerMenuItem(action.payload),
+      };
+    },
+    updateCart(state, action) {
+      return {
+        ...state,
+        cart: action.payload,
       };
     },
   },
@@ -38,4 +50,5 @@ export const updateAppCommonData = { ...appSlice.actions };
 
 export const appStore = configureStore({
   reducer: { app: appSlice.reducer },
+  middleware: customizedMiddleware,
 });
