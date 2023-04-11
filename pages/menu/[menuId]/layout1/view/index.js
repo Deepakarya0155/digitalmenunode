@@ -26,6 +26,8 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import AddItemModel from "@/Components/AddItemModel";
 import ButtomNavigation from "@/Components/BottomNavigation";
+import CartView from "@/Components/CardView";
+import { ItemAndDiscription } from "@/Components/ItemAndDiscripton";
 
 const Amount = ({ half, full }) => {
   return (
@@ -44,7 +46,7 @@ const Amount = ({ half, full }) => {
             display: half !== undefined && half !== null ? "block" : "none",
           }}
         >
-          Half {half}
+          H-{half}
         </Typography>
       </Grid>
       <Grid item xs={6}>
@@ -60,7 +62,7 @@ const Amount = ({ half, full }) => {
             textTransform: "uppercase",
           }}
         >
-          Full {full}
+          F-{full}
         </Typography>
       </Grid>
     </Grid>
@@ -75,48 +77,6 @@ const CategoryText = ({ children }) => {
     >
       {children}
     </Typography>
-  );
-};
-
-const ItemAndDiscription = ({ title, discription, veg }) => {
-  return (
-    <Grid container>
-      <Grid item xs={1}>
-        <CircleIcon
-          sx={{
-            color: veg ? "Green" : "red",
-            position: "relative",
-            top: "5px",
-            paddingRight: "3px",
-            fontSize: "15px",
-          }}
-        ></CircleIcon>
-      </Grid>
-      <Grid item xs={11}>
-        <Typography
-          variant="h6"
-          sx={{
-            color: "#ffffff",
-            fontFamily: "'Oswald', sans-serif",
-            textTransform: "uppercase",
-          }}
-        >
-          {title}
-        </Typography>
-        <Typography
-          variant="caption"
-          display="block"
-          gutterBottom
-          sx={{
-            color: "#ffffff",
-            fontFamily: "'Oswald', sans-serif",
-            textTransform: "capitalize",
-          }}
-        >
-          ({discription})
-        </Typography>
-      </Grid>
-    </Grid>
   );
 };
 
@@ -142,14 +102,14 @@ const MenuItem = ({ id, title, discription, half, full, veg }) => {
           setOpenModel(true);
         }}
       >
-        <Grid item xs={9}>
+        <Grid item xs={8}>
           <ItemAndDiscription
             title={title}
             discription={discription}
             veg={veg}
           ></ItemAndDiscription>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
           <Amount half={half} full={full}></Amount>
         </Grid>
       </Grid>
@@ -196,9 +156,6 @@ const MenuView = ({ menuItems, setVegNonVegFlag }) => {
       )}
     </>
   );
-};
-const CartView = () => {
-  return <>Cart</>;
 };
 
 const LayoutOneView = () => {

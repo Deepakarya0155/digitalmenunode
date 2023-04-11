@@ -7,6 +7,15 @@ function valuetext(value) {
 }
 
 export default function AppSilder({ count, setCount, step }) {
+  const [max, setMax] = React.useState(5);
+  const [c, setC] = React.useState(count);
+
+  React.useEffect(() => {
+    if (max <= c) {
+      setMax(max + 5);
+    }
+  }, [c]);
+
   return (
     <Box>
       <Slider
@@ -17,9 +26,12 @@ export default function AppSilder({ count, setCount, step }) {
         step={step}
         marks
         min={0}
-        max={100}
+        max={max}
         value={count}
-        onChange={(event) => setCount(event.target.value)}
+        onChange={(event) => {
+          setC(event.target.value);
+          setCount(event.target.value);
+        }}
       />
     </Box>
   );

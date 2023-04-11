@@ -216,7 +216,7 @@ const ContactUs = ({ address, phoneNumbers, socialMedia }) => {
 
 const MenuHomePage = () => {
   const router = useRouter();
-  // const [restDetails, setRestDetails] = useState();
+
   const useGetRestaurent = useGetRestaurentDetails();
   const { appDetails: restDetails } = useSelector((sl) => sl.app);
   useEffect(() => {
@@ -231,7 +231,7 @@ const MenuHomePage = () => {
     <Box>
       <Container>
         <RestaurentName>{restDetails.restaurentName}</RestaurentName>
-        <OpenMenuButton link={restDetails.OpenMenuLink} />
+        <OpenMenuButton link={restDetails.openMenuLink} />
       </Container>
       <Mobile>
         <Container>

@@ -13,75 +13,26 @@ import { Box } from "@mui/system";
 import AppSilder from "./AppSlider";
 import { useDispatch, useSelector } from "react-redux";
 import { updateAppCommonData } from "@/Services/CommonStore";
-const AddAndSubtractCount = ({ count, updateCount, number, msg }) => {
-  const iconSX = { fontSize: 30, pt: 2.5 };
-
-  const subtract = () => {
-    updateCount((old) => {
-      old -= number;
-
-      if (old <= 0) {
-        return 0;
-      }
-      return old;
-    });
-  };
-  const add = () => {
-    updateCount((old) => {
-      return old + number;
-    });
-  };
-
-  return (
-    <Grid container>
-      <Grid item>
-        <IconButton onClick={subtract} color="primary">
-          <RemoveCircleOutlinedIcon sx={iconSX}></RemoveCircleOutlinedIcon>
-        </IconButton>
-      </Grid>
-      <Grid item sx={{ flex: 1, pt: 2.7, pl: 1 }}>
-        <AppSilder
-          count={count}
-          setCount={updateCount}
-          step={number}
-        ></AppSilder>
-      </Grid>
-      <Grid item>
-        <IconButton color="primary" onClick={add}>
-          <AddCircleOutlinedIcon sx={iconSX}></AddCircleOutlinedIcon>
-        </IconButton>
-      </Grid>
-    </Grid>
-  );
-};
+import { AddAndSubtractCount } from "./AddAndSubtractCount";
+import { useCart } from "@/Services/useCart";
 
 export default function AddItemModel({ open, setOpen, data }) {
   const [count, updateCount] = React.useState(0);
   const [price, updatePrice] = React.useState(0);
-  const { cart } = useSelector((sl) => sl.app);
-  const dispatcher = useDispatch();
-
+  const { calculatePrice, addToCart } = useCart();
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
-    let tempCart = [];
-
     setOpen(false);
-    if (count > 0) {
-      tempCart = [...cart, { ...data, count, price }];
-    }
+    addToCart(data, count);
     updateCount(0);
     updatePrice(0);
-    dispatcher(updateAppCommonData.updateCart(tempCart));
   };
 
   React.useEffect(() => {
-    let full = parseInt(count);
-    let half = count > full ? 1 : 0;
-    let price = data.full * full + data.half * half;
-    updatePrice(price);
+    updatePrice(calculatePrice(count, data.full, data.half));
   }, [count]);
 
   return (
@@ -103,8 +54,15 @@ export default function AddItemModel({ open, setOpen, data }) {
               <AddAndSubtractCount
                 updateCount={updateCount}
                 number={data.half === null ? 1 : 0.5}
-                msg={"Half"}
-              ></AddAndSubtractCount>
+              >
+                <Box sx={{ pl: 1 }}>
+                  <AppSilder
+                    count={count}
+                    setCount={updateCount}
+                    step={data.half === null ? 1 : 0.5}
+                  ></AppSilder>
+                </Box>
+              </AddAndSubtractCount>
             </Box>
 
             <Box>
