@@ -41,7 +41,7 @@ const createDrawerMenuItem = (appDetails) => {
   menu.push({
     icon: <RestaurantMenuIcon color="primary" />,
     title: "HOME",
-    link: "/menu/1/layout1",
+    link: "/menu/" + appDetails.appId + "/layout1",
   });
   return menu;
 };

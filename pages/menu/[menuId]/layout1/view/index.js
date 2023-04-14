@@ -128,8 +128,8 @@ const CategoryList = ({ catName, items }) => {
             id={item.item_id}
             title={item.title}
             discription={item.discription}
-            full={item.full}
-            half={item.half}
+            full={item.fullPrice}
+            half={item.halfPrice}
             veg={item.veg}
           ></MenuItem>
         ))}
